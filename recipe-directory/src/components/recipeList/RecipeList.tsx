@@ -1,5 +1,5 @@
 import './RecipeList.css';
-import { IRecipe } from '../../types';
+import { IRecipe } from '../../types/recipeTypes';
 import { NavLink } from 'react-router-dom';
 
 const RecipeList = ({ recipes }: { recipes: IRecipe[] }) => {

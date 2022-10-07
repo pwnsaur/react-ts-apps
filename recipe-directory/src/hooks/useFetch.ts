@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IRecipe } from './../types/index';
+import { IRecipe } from '../types/recipeTypes';
 
 interface Options {
   method: string;

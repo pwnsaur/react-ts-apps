@@ -1,7 +1,7 @@
 import './Recipe.css';
 import { useParams } from 'react-router-dom';
 import { useFetch } from '../../hooks/useFetch';
-import { IRecipe } from '../../types';
+import { IRecipe } from '../../types/recipeTypes';
 import { url } from '../../globals';
 
 const Recipe = () => {
