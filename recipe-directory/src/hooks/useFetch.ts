@@ -1,13 +1,21 @@
-import { IRecipe } from './../types/index';
 import { useState, useEffect } from 'react';
+import { IRecipe } from './../types/index';
+
+interface Options {
+  method: string;
+  headers: {
+    'Content-Type': string;
+  };
+  body: string;
+}
 
 export const useFetch = (url: string, method = 'GET') => {
   const [data, setData] = useState<null | IRecipe[]>(null);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<null | string>(null);
-  const [options, setOptions] = useState<null | object>(null);
+  const [options, setOptions] = useState<null | Options>(null);
 
-  const postData = async (postData: IRecipe) => {
+  const postData = (postData: IRecipe) => {
     setOptions({
       method: 'POST',
       headers: {
@@ -17,18 +25,10 @@ export const useFetch = (url: string, method = 'GET') => {
     });
   };
 
-  interface Options {
-    method?: string;
-    headers?: {
-      'Content-Type': string;
-    };
-    body?: string;
-  }
-
   useEffect(() => {
     const controller = new AbortController();
 
-    const fetchData = async (fetchOptions: Options = {}) => {
+    const fetchData = async (fetchOptions: Options | null) => {
       setIsPending(true);
 
       try {
@@ -58,7 +58,7 @@ export const useFetch = (url: string, method = 'GET') => {
     };
 
     if (method === 'GET') {
-      fetchData();
+      fetchData(null);
     }
     if (method === 'POST' && options) {
       fetchData(options);

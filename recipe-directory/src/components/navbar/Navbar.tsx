@@ -1,5 +1,6 @@
 import './Navbar.css';
 import { NavLink } from 'react-router-dom';
+import { Searchbar } from '../../components/index';
 
 const Navbar = () => {
   return (
@@ -8,9 +9,8 @@ const Navbar = () => {
         <NavLink to='/' end className='brand'>
           <h1>on nom</h1>
         </NavLink>
+        <Searchbar />
         <NavLink to='create'>Create Recipe</NavLink>
-        {/* <NavLink to='search'>Search</NavLink>
-        <NavLink to='recipes/:id'>Recipes</NavLink> */}
       </nav>
     </div>
   );
