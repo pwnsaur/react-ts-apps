@@ -3,16 +3,18 @@ import { useParams } from 'react-router-dom';
 import { useFetch } from '../../hooks/useFetch';
 import { IRecipe } from '../../types/recipeTypes';
 import { url } from '../../globals';
+import { useTheme } from '../../hooks/useTheme';
 
 const Recipe = () => {
   const { id } = useParams();
   const { data: recipe, isPending, error } = useFetch(`${url}${id}`);
+  const { mode } = useTheme() || {};
 
   // they made me do it
   const sketchyRecipe = recipe as unknown as IRecipe;
 
   return (
-    <div className='recipe'>
+    <div className={`recipe ${mode}`}>
       {error && <p className='error'>error</p>}
       {isPending && <p className='loading'>Loading...</p>}
       {recipe && (

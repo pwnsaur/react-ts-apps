@@ -1,10 +1,10 @@
 import './Navbar.css';
 import { NavLink } from 'react-router-dom';
-import { Searchbar } from '../../components/index';
+import { Searchbar } from '../';
 import { useTheme } from '../../hooks/useTheme';
 
 const Navbar = () => {
-  const { color } = useTheme();
+  const { color } = useTheme() || {};
 
   return (
     <div className='navbar' style={{ background: color }}>

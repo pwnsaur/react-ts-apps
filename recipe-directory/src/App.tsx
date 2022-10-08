@@ -1,13 +1,17 @@
 import './App.css';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Create, Home, Recipe, Search } from './pages';
-import { Navbar } from './components';
+import { Navbar, ThemeSelector } from './components';
+import { useTheme } from './hooks/useTheme';
 
 const App = () => {
+  const { mode } = useTheme() || {};
+
   return (
-    <div className='App'>
+    <div className={`App ${mode}`}>
       <BrowserRouter>
         <Navbar />
+        <ThemeSelector />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='create' element={<Create />} />
