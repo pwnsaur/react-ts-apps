@@ -1,10 +1,39 @@
 import './Home.css';
-import { useFetch } from '../../hooks/useFetch';
-import { url } from '../../globals';
 import { RecipeList } from '../../components/index';
+import { db } from '../../firestore/config';
+import { useEffect, useState } from 'react';
+import { IRecipe } from '../../types/recipeTypes';
 
 const Home = () => {
-  const { data, isPending, error } = useFetch(url);
+  const [data, setData] = useState<IRecipe[]>([]);
+  const [isPending, setIsPending] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsPending(true);
+
+    const unsub = db.collection('recipes').onSnapshot(
+      snapshot => {
+        if (snapshot.empty) {
+          console.log('Stay hungry!');
+          setIsPending(false);
+          return;
+        }
+        const recipes: IRecipe[] = [];
+        snapshot.forEach(doc => {
+          recipes.push({ id: doc.id, ...doc.data() } as IRecipe);
+        });
+        setData(recipes);
+        setIsPending(false);
+      },
+      error => {
+        setError(true);
+        setIsPending(false);
+      }
+    );
+
+    return () => unsub();
+  }, []);
 
   return (
     <div className='home'>

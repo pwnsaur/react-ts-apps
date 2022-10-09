@@ -1,17 +1,47 @@
 import './Recipe.css';
 import { useParams } from 'react-router-dom';
-import { useFetch } from '../../hooks/useFetch';
 import { IRecipe } from '../../types/recipeTypes';
-import { url } from '../../globals';
 import { useTheme } from '../../hooks/useTheme';
+import { db } from '../../firestore/config';
+import { useEffect, useState } from 'react';
 
 const Recipe = () => {
+  const [recipe, setRecipe] = useState<IRecipe | null>(null);
+  const [isPending, setIsPending] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const { id } = useParams();
-  const { data: recipe, isPending, error } = useFetch(`${url}${id}`);
   const { mode } = useTheme() || {};
 
-  // they made me do it
-  const sketchyRecipe = recipe as unknown as IRecipe;
+  useEffect(() => {
+    setIsPending(true);
+
+    const unsub = db
+      .collection('recipes')
+      .doc(id)
+      .onSnapshot(
+        doc => {
+          if (!doc.exists) {
+            console.log('Stay hungry!');
+            setIsPending(false);
+            return;
+          }
+          setRecipe({ id: doc.id, ...doc.data() } as IRecipe);
+          setIsPending(false);
+        },
+        error => {
+          setError(true);
+          setIsPending(false);
+        }
+      );
+
+    return () => unsub();
+  }, [id]);
+
+  const handleUpdate = () => {
+    db.collection('recipes').doc(id).update({
+      title: 'Updated title',
+    });
+  };
 
   return (
     <div className={`recipe ${mode}`}>
@@ -19,14 +49,15 @@ const Recipe = () => {
       {isPending && <p className='loading'>Loading...</p>}
       {recipe && (
         <>
-          <h2 className='page-title'>{sketchyRecipe.title}</h2>
-          <p> Takes {sketchyRecipe.cookingTime} to make.</p>
+          <h2 className='page-title'>{recipe.title}</h2>
+          <p> Takes {recipe.cookingTime} to make.</p>
           <ul>
-            {sketchyRecipe.ingredients.map(ingredient => (
+            {recipe.ingredients.map(ingredient => (
               <li key={ingredient}>{ingredient}</li>
             ))}
           </ul>
-          <p className='method'>{sketchyRecipe.method}</p>
+          <p className='method'>{recipe.method}</p>
+          <button onClick={handleUpdate}>Update me</button>
         </>
       )}
     </div>

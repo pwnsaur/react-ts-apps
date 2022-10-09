@@ -1,8 +1,7 @@
 import './Create.css';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from '../../hooks/useFetch';
-import { url } from '../../globals';
+import { db } from '../../firestore/config';
 
 const Create = () => {
   const [title, setTitle] = useState<string>('');
@@ -13,16 +12,20 @@ const Create = () => {
   const ingredientInput = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
-  const { postData, data, error } = useFetch(url, 'POST');
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    postData({
+    const doc = {
       title,
       method,
       cookingTime: cookingTime + ' minutes',
       ingredients,
-    });
+    };
+    try {
+      await db.collection('recipes').add(doc);
+      navigate('/');
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleAddIngredient = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,10 +37,6 @@ const Create = () => {
     setNewIngredient('');
     ingredientInput.current?.focus();
   };
-
-  useEffect(() => {
-    data && navigate(`/`);
-  }, [data, navigate]);
 
   return (
     <div className='create'>
