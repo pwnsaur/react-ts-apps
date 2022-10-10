@@ -33,15 +33,17 @@ const authReducer = (state: AuthContextType, action: Action) => {
   }
 };
 
+const initialState: AuthContextType = {
+  user: null,
+  authIsReady: false,
+};
+
 export const AuthContextProvider = ({
   children,
 }: {
   children: JSX.Element | JSX.Element[];
 }) => {
-  const [state, dispatch] = useReducer(authReducer, {
-    user: null,
-    authIsReady: false,
-  });
+  const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
     projectAuth.onAuthStateChanged(user => {
