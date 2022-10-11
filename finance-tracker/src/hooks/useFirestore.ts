@@ -91,16 +91,22 @@ export const useFirestore = (collection: string) => {
     }
   };
 
-  const deleteDoc = async (id: string) => {
+  const deleteDoc = async (id: string | undefined) => {
+    dispatch({ type: 'IS_PENDING' });
+
     try {
       await ref.doc(id).delete();
 
       safeDispatch({
         type: 'DELETE_DOC',
-        payload: id,
       });
-    } catch (err) {
-      console.log('err', err);
+    } catch (error) {
+      if (error instanceof Error) {
+        safeDispatch({
+          type: 'ERROR',
+          payload: error.message,
+        });
+      }
     }
   };
 
